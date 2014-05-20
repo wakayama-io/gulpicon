@@ -90,25 +90,25 @@ gulp.task('gulpicon', function () {
               throw new Error( e );
             }
 
-            console.log("Generating Svg Preview");
-
             // generate preview
-            var previewTemplate = path.join(__dirname,'/templates/gulpicon-preview.hbs'); // TODO: configure path
-            var helper = require( path.join( __dirname, '/lib/', 'gulpicon-helper' ) ); // TODO: configure path
-            var previewhtml = 'preview.html';
-            var cssPrefix = '.';
-            var uglify = require( 'uglify-js' );
-            var loader = path.join( __dirname, '/lib/', 'gulpicon-loader.js' ); // TODO: configure path
-            var loaderMin = uglify.minify( loader ).code;
+            if (fs.existsSync(svgtmp)) {
+              console.log("Generating Preview");
+              var previewTemplate = path.join(__dirname,'/templates/gulpicon-preview.hbs'); // TODO: configure path
+              var helper = require( path.join( __dirname, '/lib/', 'gulpicon-helper' ) ); // TODO: configure path
+              var previewhtml = 'preview.html';
+              var cssPrefix = '.';
+              var uglify = require( 'uglify-js' );
+              var loader = path.join( __dirname, '/lib/', 'gulpicon-loader.js' ); // TODO: configure path
+              var loaderMin = uglify.minify( loader ).code;
 
-            try {
-              if (fs.existsSync(svgtmp)) {
+              try {
                 helper.createPreview(svgtmp, dest, '400px', '300px', loaderMin, previewhtml, cssPrefix, previewTemplate);
+              } catch(er) {
+                throw new Error( er );
               }
-            } catch(er) {
-              throw new Error( er );
             }
 
+            console.log("Cleaning up");
             es.concat(
               gulp.src(svgtmp, {read: false}) // Clean tmp folders
                 .pipe(clean()),
