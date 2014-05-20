@@ -22,6 +22,7 @@ gulp.task('gulpicon', function () {
       svgtmp = path.join(dest, '/svgtmp/'),
       pngtmp = path.join(dest, '/pngtmp/'),
       pngs = path.join(dest, '/pngs/'),
+      fs = require('fs'),
       dataSvgCss = path.join(dest, '/icons.data.svg.css'),
       dataPngCss = path.join(dest, '/icons.data.png.css'),
       urlPngCss = path.join(dest, '/icons.fallback.css'),
@@ -76,14 +77,20 @@ gulp.task('gulpicon', function () {
             console.log("Writing CSS");
 
             try {
-              svgde.encode();
-              pngde.encode();
-              pngdefall.encode();
+              if (fs.existsSync(svgtmp)) {
+                svgde.encode();
+              }
+              if (fs.existsSync(pngtmp)) {
+                pngde.encode();
+              }
+              if (fs.existsSync(pngs)) {
+                pngdefall.encode();
+              }
             } catch( e ){
               throw new Error( e );
             }
 
-            console.log("Generating Preview");
+            console.log("Generating Svg Preview");
 
             // generate preview
             var previewTemplate = path.join(__dirname,'/templates/gulpicon-preview.hbs'); // TODO: configure path
@@ -95,7 +102,9 @@ gulp.task('gulpicon', function () {
             var loaderMin = uglify.minify( loader ).code;
 
             try {
-              helper.createPreview(svgtmp, dest, '400px', '300px', loaderMin, previewhtml, cssPrefix, previewTemplate);
+              if (fs.existsSync(svgtmp)) {
+                helper.createPreview(svgtmp, dest, '400px', '300px', loaderMin, previewhtml, cssPrefix, previewTemplate);
+              }
             } catch(er) {
               throw new Error( er );
             }
