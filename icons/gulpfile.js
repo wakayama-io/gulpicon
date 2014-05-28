@@ -8,10 +8,6 @@ var gulp = require('gulp'),
     svgToPng = require('svg-to-png'),
     DirectoryEncoder = require('directory-encoder');
 
-gulp.task('watch', function () {
-  gulp.watch(['./src/**'], ['gulpicon']);  // Watch src folder
-});
-
 gulp.task('gulpicon', function () {
   var icons = path.join(__dirname, '/'),  // TODO: configure path
       src = path.join(icons, '/src/**/*'),
@@ -113,6 +109,10 @@ gulp.task('gulpicon', function () {
     });
 
   return deferred.promise;
+});
+
+gulp.task('watch', function () {
+  gulp.watch(['./src/**'], ['gulpicon']);  // Watch icons/src/ folder
 });
 
 gulp.task('default', function () {
