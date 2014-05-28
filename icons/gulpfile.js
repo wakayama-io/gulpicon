@@ -6,7 +6,9 @@ var gulp = require('gulp'),
     fs = require('fs'),
     Q = require('q'),
     svgToPng = require('svg-to-png'),
-    DirectoryEncoder = require('directory-encoder');
+    DirectoryEncoder = require('directory-encoder'),
+    uglify = require('uglify-js'),
+    helper = require(path.join(__dirname, '/lib/', 'gulpicon-helper')); // TODO: configure path
 
 gulp.task('gulpicon', function () {
   var icons = path.join(__dirname, '/'),  // TODO: configure path
@@ -83,10 +85,8 @@ gulp.task('gulpicon', function () {
 
               // generate preview
               var previewTemplate = path.join(__dirname, '/templates/gulpicon-preview.hbs'); // TODO: configure path
-              var helper = require(path.join(__dirname, '/lib/', 'gulpicon-helper')); // TODO: configure path
               var previewhtml = 'preview.html';
               var cssPrefix = '.';
-              var uglify = require('uglify-js');
               var loader = path.join(__dirname, '/lib/', 'gulpicon-loader.js'); // TODO: configure path
               var loaderMin = uglify.minify(loader).code;
 
