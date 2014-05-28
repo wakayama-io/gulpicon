@@ -39,11 +39,11 @@ gulp.task('gulpicon', function () {
         .pipe(plugins.svgmin()) // Clean them
         .pipe(gulp.dest(tmp))  // Put them in tmp folder
         .on('end', function () {
-        var svgToPngOpts = {
-          defaultWidth: '400px',
-          defaultHeight: '300px'
-        };
-        svgToPng.convert(tmp, pngs, svgToPngOpts)  // Convert svgs to pngs and put them in pngs folder
+          var svgToPngOpts = {
+            defaultWidth: '400px',
+            defaultHeight: '300px'
+          };
+          svgToPng.convert(tmp, pngs, svgToPngOpts)  // Convert svgs to pngs and put them in pngs folder
           .then(function (result, err) {
             if (err) {
               throw new Error(err);
@@ -65,8 +65,8 @@ gulp.task('gulpicon', function () {
               prefix: '.'
             };
             var svgde = new DirectoryEncoder(tmp, dataSvgCss, deDataConfig),
-              pngde = new DirectoryEncoder(pngs, dataPngCss, deDataConfig),
-              pngdefall = new DirectoryEncoder(pngs, urlPngCss, deUrlConfig);
+                pngde = new DirectoryEncoder(pngs, dataPngCss, deDataConfig),
+                pngdefall = new DirectoryEncoder(pngs, urlPngCss, deUrlConfig);
 
             console.log('Writing CSS');
 
@@ -109,7 +109,7 @@ gulp.task('gulpicon', function () {
               deferred.resolve();
             });
           });
-      });
+        });
     });
 
   return deferred.promise;
