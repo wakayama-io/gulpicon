@@ -5,7 +5,6 @@ var gulp = require('gulp'),
     path = require('path'),
     fs = require('fs'),
     Q = require('q'),
-    es = require('event-stream'),
     svgToPng = require('svg-to-png'),
     DirectoryEncoder = require('directory-encoder');
 
@@ -30,17 +29,16 @@ gulp.task('gulpicon', function () {
     .on('end', function () {
       var pngFilter = plugins.filter('**/*.png');
       var svgFilter = plugins.filter('**/*.svg');
-      es.concat(  // Combines the streams and ends only when all streams emitted end
-        gulp.src(src)
-          .pipe(pngFilter) // Filter pngs
-          .pipe(plugins.rename({prefix: iconPrefix})) // Add icon prefix
-          .pipe(gulp.dest(pngs))  // Put them in pngs
-          .pipe(pngFilter.restore())
-          .pipe(svgFilter)  // Filter svgs
-          .pipe(plugins.rename({prefix: iconPrefix})) // Add icon prefix
-          .pipe(plugins.svgmin()) // Clean them
-          .pipe(gulp.dest(tmp))  // Put them in tmp folder
-      ).on('end', function () {
+      gulp.src(src)
+        .pipe(pngFilter) // Filter pngs
+        .pipe(plugins.rename({prefix: iconPrefix})) // Add icon prefix
+        .pipe(gulp.dest(pngs))  // Put them in pngs
+        .pipe(pngFilter.restore())
+        .pipe(svgFilter)  // Filter svgs
+        .pipe(plugins.rename({prefix: iconPrefix})) // Add icon prefix
+        .pipe(plugins.svgmin()) // Clean them
+        .pipe(gulp.dest(tmp))  // Put them in tmp folder
+        .on('end', function () {
         var svgToPngOpts = {
           defaultWidth: '400px',
           defaultHeight: '300px'
