@@ -5,6 +5,7 @@ var gulp = require('gulp'),
     path = require('path'),
     fs = require('fs'),
     Q = require('q'),
+    rimraf = require('rimraf'),
     svgToPng = require('svg-to-png'),
     DirectoryEncoder = require('directory-encoder'),
     uglify = require('uglify-js'),
@@ -13,8 +14,8 @@ var gulp = require('gulp'),
 gulp.task('clean-gulpicon', function () {
   var icons = path.join(__dirname, '/'),  // TODO: configure path
       dest = path.join(icons, '/dest/');
-  return gulp.src(dest, {read: false})  // Remove dest folder
-    .pipe(plugins.clean());
+
+  return rimraf.sync(dest); // Remove dest folder
 });
 
 gulp.task('gulpicon', ['clean-gulpicon'], function () {
@@ -29,7 +30,13 @@ gulp.task('gulpicon', ['clean-gulpicon'], function () {
       dataPngCss = path.join(dest, '/icons.data.png.css'),
       urlPngCss = path.join(dest, '/icons.fallback.css'),
       iconPrefix = 'icon-',
-      deferred = Q.defer();
+      deferred = Q.defer(),
+      mkdirp = require('mkdirp');
+
+  // Create folders
+  mkdirp.sync(dest);
+  mkdirp.sync(tmp);
+  mkdirp.sync(pngs);
 
   gulp.src(src)
     .pipe(pngFilter) // Filter pngs
@@ -46,10 +53,7 @@ gulp.task('gulpicon', ['clean-gulpicon'], function () {
         defaultHeight: '300px'
       };
       svgToPng.convert(tmp, pngs, svgToPngOpts)  // Convert svgs to pngs and put them in pngs folder
-      .then(function (result, err) {
-        if (err) {
-          throw new Error(err);
-        }
+      .then(function () {
         var deDataConfig = {
           pngfolder: pngs,
           pngpath: './pngs/',  // TODO: configure path
@@ -70,22 +74,18 @@ gulp.task('gulpicon', ['clean-gulpicon'], function () {
             pngde = new DirectoryEncoder(pngs, dataPngCss, deDataConfig),
             pngdefall = new DirectoryEncoder(pngs, urlPngCss, deUrlConfig);
 
-        console.log('Writing CSS');
+        plugins.util.log('Writing CSS');
 
         try {
-          if (fs.existsSync(tmp)) {
-            svgde.encode();
-          }
-          if (fs.existsSync(pngs)) {
-            pngde.encode();
-            pngdefall.encode();
-          }
+          svgde.encode();
+          pngde.encode();
+          pngdefall.encode();
         } catch (e) {
           throw new Error(e);
         }
 
         if (fs.existsSync(tmp)) {
-          console.log('Generating Preview');
+          plugins.util.log('Generating Preview');
 
           // generate preview
           var previewTemplate = path.join(__dirname, '/templates/gulpicon-preview.hbs'); // TODO: configure path
@@ -101,11 +101,23 @@ gulp.task('gulpicon', ['clean-gulpicon'], function () {
           }
         }
 
-        console.log('Cleaning up');
-        gulp.src(tmp, {read: false}) // Clean tmp folder
-        .pipe(plugins.clean())
-        .on('end', function () {
-          console.log('done');
+        plugins.util.log('Cleaning up');
+
+        rimraf(tmp, function () { // Clean tmp folder
+          // Create files if doesn't exist
+          var exists = fs.existsSync(dataSvgCss);
+          if (!exists) {
+            fs.writeFileSync(dataSvgCss, '');
+          }
+          exists = fs.existsSync(dataPngCss);
+          if (!exists) {
+            fs.writeFileSync(dataPngCss, '');
+          }
+          exists = fs.existsSync(urlPngCss);
+          if (!exists) {
+            fs.writeFileSync(urlPngCss, '');
+          }
+          plugins.util.log('done');
           deferred.resolve();
         });
       });
