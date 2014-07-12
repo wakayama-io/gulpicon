@@ -11,4 +11,4 @@ Filamentgroup's [grunticon](https://github.com/filamentgroup/grunticon)
 
 ### License
 
-Copyright (c) 2014 Koji Wakayama. Licensed under the [MIT License](http://en.wikipedia.org/wiki/MIT_License).
+Copyright (c) 2014 Koji Wakayama. Licensed under the [MIT License](http://kojiwakayama.mit-license.org).
